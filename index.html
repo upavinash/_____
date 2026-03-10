@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>🌙 Ramzan Mubarak RAANI</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --navy: #030a1a;
+  --deep-navy: #010610;
+  --gold: #d4a843;
+  --gold-light: #f0c96a;
+  --gold-pale: #faecc2;
+  --silver: #c8d8e8;
+  --moonlight: #e8f4ff;
+  --star-white: #fffde7;
+  --glow-gold: rgba(212,168,67,0.6);
+  --glow-moon: rgba(200,220,255,0.4);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+html, body {
+  width:100%; height:100%;
+  overflow:hidden;
+  background:#010610;
+  font-family:'Cormorant Garamond', serif;
+  cursor: default;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ===================== CANVAS ===================== */
+#bgCanvas {
+  position:fixed; top:0; left:0;
+  width:100%; height:100%;
+  z-index:0;
+  pointer-events:none;
+}
+
+/* ===================== PAGES ===================== */
+.page {
+  position:fixed; top:0; left:0;
+  width:100%; height:100%;
+  display:flex; align-items:center; justify-content:center;
+  flex-direction:column;
+  z-index:10;
+  opacity:0;
+  pointer-events:none;
+  transition:opacity 1.2s cubic-bezier(0.4,0,0.2,1);
+}
+.page.active {
+  opacity:1;
+  pointer-events:all;
+}
+
+/* ===================== PAGE TRANSITION OVERLAY ===================== */
+#transitionOverlay {
+  position:fixed; top:0; left:0;
+  width:100%; height:100%;
+  z-index:100;
+  pointer-events:none;
+  opacity:0;
+  background:radial-gradient(ellipse at center, #d4a843 0%, #030a1a 70%);
+  transition:opacity 0.8s ease;
+}
+#transitionOverlay.flash { opacity:1; }
+
+/* ===================== PAGE 1 ===================== */
+#page1 { gap:0; }
+
+.bismillah {
+  font-family:'Amiri', serif;
+  color:var(--gold-light);
+  font-size:clamp(1rem,3vw,1.4rem);
+  letter-spacing:0.15em;
+  opacity:0;
+  animation:fadeUp 2s 1s forwards;
+  text-shadow:0 0 20px var(--glow-gold);
+  margin-bottom:10px;
+  text-align:center;
+}
+
+.arch-wrapper {
+  position:relative;
+  width:min(340px, 88vw);
+  height:min(420px, 72vh);
+  margin:0 auto;
+  opacity:0;
+  animation:archReveal 2.5s 0.5s cubic-bezier(0.2,0,0.1,1) forwards;
+}
+
+@keyframes archReveal {
+  0% { opacity:0; transform:translateY(40px) scale(0.92); }
+  100% { opacity:1; transform:translateY(0) scale(1); }
+}
+
+.arch-svg {
+  position:absolute; top:0; left:0;
+  width:100%; height:100%;
+  filter:drop-shadow(0 0 18px #d4a84388) drop-shadow(0 0 40px #d4a84322);
+}
+
+.arch-content {
+  position:absolute;
+  top:50%; left:50%;
+  transform:translate(-50%,-54%);
+  text-align:center;
+  width:82%;
+  z-index:5;
+}
+
+.moon-container {
+  position:relative;
+  width:clamp(60px,14vw,90px);
+  height:clamp(60px,14vw,90px);
+  margin:0 auto 12px;
+}
+
+#moonCanvas {
+  width:100%; height:100%;
+}
+
+.main-title {
+  font-family:'Cinzel Decorative', cursive;
+  font-size:clamp(1rem,4vw,1.6rem);
+  color:var(--gold-light);
+  text-shadow:0 0 30px var(--glow-gold), 0 0 60px rgba(212,168,67,0.3);
+  line-height:1.3;
+  opacity:0;
+  animation:fadeUp 1.5s 2.5s forwards;
+  margin-bottom:6px;
+}
+
+.name-glow {
+  font-size:clamp(1.4rem,6vw,2.4rem);
+  background:linear-gradient(135deg,#f0c96a,#ffffff,#d4a843);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  display:block;
+  animation:nameShimmer 3s 3s infinite;
+}
+
+@keyframes nameShimmer {
+  0%,100%{filter:brightness(1)}
+  50%{filter:brightness(1.4)}
+}
+
+.subtitle {
+  font-family:'Amiri',serif;
+  font-style:italic;
+  color:var(--silver);
+  font-size:clamp(0.75rem,2.5vw,1rem);
+  opacity:0;
+  animation:fadeUp 1.5s 3s forwards;
+  margin-bottom:14px;
+  letter-spacing:0.08em;
+}
+
+/* countdown */
+.countdown-box {
+  display:flex; gap:8px; justify-content:center;
+  opacity:0;
+  animation:fadeUp 1.5s 3.5s forwards;
+  margin-bottom:16px;
+}
+.cd-unit {
+  display:flex; flex-direction:column; align-items:center;
+  background:rgba(212,168,67,0.1);
+  border:1px solid rgba(212,168,67,0.3);
+  border-radius:8px;
+  padding:6px 10px;
+  min-width:52px;
+  backdrop-filter:blur(6px);
+}
+.cd-num {
+  font-family:'Cinzel Decorative',cursive;
+  font-size:clamp(1rem,3.5vw,1.4rem);
+  color:var(--gold-light);
+  line-height:1;
+  text-shadow:0 0 12px var(--glow-gold);
+}
+.cd-label {
+  font-size:0.55rem;
+  color:var(--silver);
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  margin-top:2px;
+}
+
+/* gate */
+.gate-group {
+  opacity:0;
+  animation:fadeUp 1.5s 4s forwards;
+}
+
+.enter-btn {
+  font-family:'Cinzel Decorative',cursive;
+  font-size:clamp(0.7rem,2.5vw,0.9rem);
+  color:var(--navy);
+  background:linear-gradient(135deg,#d4a843,#f0c96a,#d4a843);
+  border:none; outline:none;
+  padding:12px 28px;
+  border-radius:50px;
+  cursor:pointer;
+  letter-spacing:0.12em;
+  box-shadow:0 0 30px var(--glow-gold), inset 0 1px 0 rgba(255,255,255,0.4);
+  transition:all 0.3s ease;
+  position:relative;
+  overflow:hidden;
+}
+.enter-btn::before {
+  content:'';
+  position:absolute; top:-50%; left:-50%;
+  width:200%; height:200%;
+  background:linear-gradient(transparent,rgba(255,255,255,0.3),transparent);
+  transform:rotate(45deg) translateX(-100%);
+  transition:transform 0.6s ease;
+}
+.enter-btn:hover::before { transform:rotate(45deg) translateX(100%); }
+.enter-btn:hover {
+  transform:scale(1.05);
+  box-shadow:0 0 50px var(--glow-gold), 0 0 80px rgba(212,168,67,0.3);
+}
+.enter-btn:active { transform:scale(0.97); }
+
+/* floating lanterns */
+.lantern {
+  position:fixed;
+  pointer-events:none;
+  z-index:5;
+  opacity:0;
+  animation:lanternFloat linear infinite, lanternFade 2s forwards;
+}
+.lantern svg { filter:drop-shadow(0 0 8px #d4a843bb); }
+
+@keyframes lanternFloat {
+  0% { transform:translateY(0) rotate(-3deg); }
+  50% { transform:translateY(-18px) rotate(3deg); }
+  100% { transform:translateY(0) rotate(-3deg); }
+}
+@keyframes lanternFade {
+  0% { opacity:0; }
+  100% { opacity:0.85; }
+}
+
+/* ===================== PAGE 2 ===================== */
+#page2 {
+  justify-content:center;
+  padding:20px;
+}
+
+.garden-scene {
+  position:absolute; bottom:0; left:0;
+  width:100%; height:45%;
+  pointer-events:none;
+  z-index:1;
+}
+
+.p2-content {
+  position:relative;
+  z-index:5;
+  text-align:center;
+  max-width:min(520px,90vw);
+}
+
+.p2-moon-wrap {
+  margin:0 auto 16px;
+  width:80px; height:80px;
+  position:relative;
+}
+#moonCanvas2 {
+  width:100%; height:100%;
+  animation:moonSpin 20s linear infinite;
+}
+@keyframes moonSpin {
+  from{transform:rotate(0deg)}
+  to{transform:rotate(360deg)}
+}
+
+.p2-greeting {
+  font-family:'Amiri',serif;
+  font-size:clamp(0.85rem,2.5vw,1.1rem);
+  color:var(--gold);
+  letter-spacing:0.2em;
+  margin-bottom:10px;
+  opacity:0;
+  animation:fadeUp 1.2s 0.3s forwards;
+  text-shadow:0 0 20px var(--glow-gold);
+}
+
+.p2-title {
+  font-family:'Cinzel Decorative',cursive;
+  font-size:clamp(1.4rem,5vw,2.2rem);
+  background:linear-gradient(135deg,#f0c96a,#fff,#d4a843);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  margin-bottom:16px;
+  opacity:0;
+  animation:fadeUp 1.2s 0.6s forwards;
+  text-shadow:none;
+  filter:drop-shadow(0 0 20px rgba(212,168,67,0.5));
+}
+
+.message-card {
+  background:rgba(3,10,26,0.7);
+  border:1px solid rgba(212,168,67,0.25);
+  border-radius:20px;
+  padding:clamp(16px,4vw,28px) clamp(18px,5vw,36px);
+  backdrop-filter:blur(20px);
+  box-shadow:0 0 40px rgba(212,168,67,0.1), inset 0 1px 0 rgba(212,168,67,0.15);
+  opacity:0;
+  animation:fadeUp 1.2s 0.9s forwards;
+  position:relative;
+  overflow:hidden;
+}
+.message-card::before {
+  content:'';
+  position:absolute; top:0; left:0;
+  width:100%; height:2px;
+  background:linear-gradient(90deg,transparent,#d4a843,transparent);
+  animation:shimmerLine 3s linear infinite;
+}
+@keyframes shimmerLine {
+  0%{transform:translateX(-100%)}
+  100%{transform:translateX(100%)}
+}
+
+.message-arabic {
+  font-family:'Amiri',serif;
+  font-size:clamp(1.1rem,3.5vw,1.5rem);
+  color:var(--gold-light);
+  direction:rtl;
+  margin-bottom:14px;
+  line-height:1.8;
+  text-shadow:0 0 15px var(--glow-gold);
+}
+
+.message-text {
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(0.9rem,2.8vw,1.15rem);
+  color:var(--moonlight);
+  line-height:1.8;
+  font-weight:300;
+}
+.message-text em {
+  color:var(--gold-light);
+  font-style:italic;
+}
+
+.sparkle-container {
+  position:absolute; top:0; left:0;
+  width:100%; height:100%;
+  pointer-events:none;
+  overflow:hidden;
+}
+.sparkle {
+  position:absolute;
+  width:4px; height:4px;
+  border-radius:50%;
+  background:var(--gold-light);
+  box-shadow:0 0 6px var(--gold);
+  animation:sparkleFly linear infinite;
+}
+@keyframes sparkleFly {
+  0%{opacity:0;transform:translateY(0) scale(0)}
+  20%{opacity:1;transform:translateY(-20px) scale(1)}
+  80%{opacity:0.8;transform:translateY(-80px) scale(0.8)}
+  100%{opacity:0;transform:translateY(-120px) scale(0)}
+}
+
+.nav-btn {
+  margin-top:20px;
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(0.8rem,2.5vw,1rem);
+  color:var(--gold-light);
+  background:transparent;
+  border:1px solid rgba(212,168,67,0.4);
+  padding:10px 24px;
+  border-radius:50px;
+  cursor:pointer;
+  letter-spacing:0.1em;
+  transition:all 0.3s ease;
+  opacity:0;
+  animation:fadeUp 1.2s 1.5s forwards;
+  backdrop-filter:blur(8px);
+}
+.nav-btn:hover {
+  background:rgba(212,168,67,0.15);
+  border-color:var(--gold);
+  box-shadow:0 0 20px var(--glow-gold);
+  transform:translateY(-2px);
+}
+
+/* ===================== PAGE 3 ===================== */
+#page3 { gap:0; padding:20px; }
+
+.p3-content {
+  position:relative;
+  z-index:5;
+  text-align:center;
+  max-width:min(500px,90vw);
+}
+
+.mosque-container {
+  position:absolute; bottom:0; left:50%;
+  transform:translateX(-50%);
+  width:min(500px,90vw);
+  z-index:2;
+  pointer-events:none;
+}
+
+.dua-title {
+  font-family:'Amiri',serif;
+  font-size:clamp(0.9rem,2.8vw,1.2rem);
+  color:var(--gold);
+  letter-spacing:0.2em;
+  margin-bottom:8px;
+  opacity:0;
+  animation:fadeUp 1.2s 0.3s forwards;
+  text-shadow:0 0 20px var(--glow-gold);
+}
+
+.dua-heading {
+  font-family:'Cinzel Decorative',cursive;
+  font-size:clamp(1.3rem,4.5vw,2rem);
+  background:linear-gradient(135deg,#f0c96a,#fff,#d4a843);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  background-clip:text;
+  margin-bottom:18px;
+  opacity:0;
+  animation:fadeUp 1.2s 0.6s forwards;
+}
+
+.dua-card {
+  background:rgba(3,10,26,0.75);
+  border:1px solid rgba(212,168,67,0.2);
+  border-radius:20px;
+  padding:clamp(16px,4vw,26px) clamp(18px,5vw,32px);
+  backdrop-filter:blur(20px);
+  box-shadow:0 0 50px rgba(212,168,67,0.08);
+  opacity:0;
+  animation:fadeUp 1.2s 0.9s forwards;
+  margin-bottom:20px;
+  position:relative;
+  overflow:hidden;
+}
+.dua-card::after {
+  content:'';
+  position:absolute; bottom:0; left:0;
+  width:100%; height:2px;
+  background:linear-gradient(90deg,transparent,#d4a843,transparent);
+  animation:shimmerLine 3s linear infinite reverse;
+}
+
+.dua-arabic {
+  font-family:'Amiri',serif;
+  font-size:clamp(1.2rem,4vw,1.6rem);
+  color:var(--gold-light);
+  direction:rtl;
+  margin-bottom:12px;
+  line-height:2;
+  text-shadow:0 0 15px var(--glow-gold);
+}
+
+.dua-text {
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(0.9rem,2.8vw,1.1rem);
+  color:var(--moonlight);
+  line-height:1.9;
+  font-style:italic;
+  font-weight:300;
+}
+.dua-text strong {
+  color:var(--gold-light);
+  font-style:normal;
+  font-weight:600;
+}
+
+.dua-btn {
+  font-family:'Cinzel Decorative',cursive;
+  font-size:clamp(0.75rem,2.5vw,0.95rem);
+  color:var(--navy);
+  background:linear-gradient(135deg,#d4a843,#f0c96a,#c89830);
+  border:none; outline:none;
+  padding:14px 32px;
+  border-radius:50px;
+  cursor:pointer;
+  letter-spacing:0.1em;
+  box-shadow:0 0 30px var(--glow-gold), inset 0 1px 0 rgba(255,255,255,0.3);
+  transition:all 0.3s ease;
+  opacity:0;
+  animation:fadeUp 1.2s 1.2s forwards;
+  position:relative;
+  overflow:hidden;
+}
+.dua-btn:hover {
+  transform:scale(1.05);
+  box-shadow:0 0 60px var(--glow-gold);
+}
+.dua-btn:active { transform:scale(0.97); }
+
+.dua-response {
+  margin-top:16px;
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(1rem,3vw,1.3rem);
+  color:var(--gold-light);
+  text-shadow:0 0 20px var(--glow-gold), 0 0 40px rgba(212,168,67,0.4);
+  opacity:0;
+  transition:opacity 1.5s ease, transform 1.5s ease;
+  transform:translateY(10px);
+  font-style:italic;
+  display:none;
+}
+.dua-response.visible {
+  opacity:1;
+  transform:translateY(0);
+  display:block;
+}
+
+.whatsapp-btn {
+  display:inline-flex; align-items:center; gap:8px;
+  margin-top:12px;
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(0.8rem,2.5vw,1rem);
+  color:#fff;
+  background:linear-gradient(135deg,#25D366,#128C7E);
+  border:none;
+  padding:10px 22px;
+  border-radius:50px;
+  cursor:pointer;
+  transition:all 0.3s ease;
+  text-decoration:none;
+  opacity:0;
+  animation:fadeUp 1.2s 1.8s forwards;
+  box-shadow:0 4px 20px rgba(37,211,102,0.3);
+}
+.whatsapp-btn:hover {
+  transform:translateY(-2px);
+  box-shadow:0 8px 30px rgba(37,211,102,0.4);
+}
+.back-btn {
+  margin-top:10px;
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(0.75rem,2.2vw,0.9rem);
+  color:var(--silver);
+  background:transparent;
+  border:1px solid rgba(200,216,232,0.2);
+  padding:8px 20px;
+  border-radius:50px;
+  cursor:pointer;
+  transition:all 0.3s ease;
+  opacity:0;
+  animation:fadeUp 1.2s 2s forwards;
+}
+.back-btn:hover { color:var(--gold-light); border-color:rgba(212,168,67,0.4); }
+
+/* dua particles */
+.dua-particle {
+  position:fixed;
+  border-radius:50%;
+  pointer-events:none;
+  z-index:50;
+  animation:riseStar ease-out forwards;
+}
+@keyframes riseStar {
+  0%{opacity:1; transform:translateY(0) scale(1);}
+  100%{opacity:0; transform:translateY(-80vh) scale(0);}
+}
+
+/* ===================== UTILITIES ===================== */
+@keyframes fadeUp {
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* page indicator dots */
+.page-dots {
+  position:fixed; bottom:20px; left:50%;
+  transform:translateX(-50%);
+  display:flex; gap:8px;
+  z-index:200;
+}
+.dot {
+  width:6px; height:6px;
+  border-radius:50%;
+  background:rgba(212,168,67,0.3);
+  border:1px solid rgba(212,168,67,0.5);
+  transition:all 0.4s ease;
+  cursor:pointer;
+}
+.dot.active {
+  background:var(--gold);
+  box-shadow:0 0 8px var(--glow-gold);
+  width:20px;
+  border-radius:3px;
+}
+
+/* audio btn */
+.audio-btn {
+  position:fixed; top:16px; right:16px;
+  z-index:200;
+  width:38px; height:38px;
+  border-radius:50%;
+  background:rgba(3,10,26,0.7);
+  border:1px solid rgba(212,168,67,0.4);
+  color:var(--gold-light);
+  font-size:16px;
+  cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  backdrop-filter:blur(10px);
+  transition:all 0.3s ease;
+  box-shadow:0 0 15px rgba(212,168,67,0.15);
+}
+.audio-btn:hover {
+  background:rgba(212,168,67,0.2);
+  box-shadow:0 0 25px var(--glow-gold);
+}
+
+/* cloud overlay */
+#cloudCanvas {
+  position:fixed; top:0; left:0;
+  width:100%; height:100%;
+  z-index:3;
+  pointer-events:none;
+  opacity:0.85;
+}
+
+/* moon overlay canvas */
+#mainMoonCanvas {
+  position:fixed;
+  z-index:4;
+  pointer-events:none;
+}
+
+/* golden particles overlay */
+#particleCanvas {
+  position:fixed; top:0; left:0;
+  width:100%; height:100%;
+  z-index:2;
+  pointer-events:none;
+}
+</style>
+</head>
+<body>
+
+<!-- Background Canvases -->
+<canvas id="bgCanvas"></canvas>
+<canvas id="particleCanvas"></canvas>
+<canvas id="cloudCanvas"></canvas>
+<canvas id="mainMoonCanvas"></canvas>
+
+<!-- Audio -->
+<audio id="ambientAudio" loop>
+  <source src="data:audio/wav;base64," type="audio/wav">
+</audio>
+
+<!-- Audio Toggle -->
+<button class="audio-btn" id="audioBtn" title="Toggle Sound">🔇</button>
+
+<!-- Page Indicator -->
+<div class="page-dots">
+  <div class="dot active" onclick="goToPage(1)"></div>
+  <div class="dot" onclick="goToPage(2)"></div>
+  <div class="dot" onclick="goToPage(3)"></div>
+</div>
+
+<!-- Transition Overlay -->
+<div id="transitionOverlay"></div>
+
+<!-- ======================== PAGE 1 ======================== -->
+<div class="page active" id="page1">
+  <div class="bismillah">﷽ بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيم</div>
+
+  <div class="arch-wrapper">
+    <!-- Golden Arch SVG -->
+    <svg class="arch-svg" viewBox="0 0 340 420" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- outer arch -->
+      <path d="M20 420 L20 200 Q20 60 170 40 Q320 60 320 200 L320 420 Z" stroke="#d4a843" stroke-width="2.5" fill="rgba(212,168,67,0.04)" stroke-dasharray="8 4"/>
+      <!-- inner arch -->
+      <path d="M45 420 L45 205 Q45 90 170 72 Q295 90 295 205 L295 420 Z" stroke="#d4a843" stroke-width="1.5" fill="rgba(212,168,67,0.06)"/>
+      <!-- decorative top -->
+      <circle cx="170" cy="50" r="18" stroke="#d4a843" stroke-width="1.5" fill="rgba(212,168,67,0.15)"/>
+      <circle cx="170" cy="50" r="10" fill="#d4a843" opacity="0.4"/>
+      <!-- columns -->
+      <rect x="15" y="390" width="40" height="30" fill="rgba(212,168,67,0.1)" stroke="#d4a843" stroke-width="1"/>
+      <rect x="285" y="390" width="40" height="30" fill="rgba(212,168,67,0.1)" stroke="#d4a843" stroke-width="1"/>
+      <!-- ornamental patterns -->
+      <g opacity="0.5">
+        <polygon points="170,30 175,42 187,42 177,50 181,62 170,55 159,62 163,50 153,42 165,42" fill="#d4a843" opacity="0.7"/>
+      </g>
+      <!-- side decorations -->
+      <circle cx="20" cy="200" r="4" fill="#d4a843" opacity="0.6"/>
+      <circle cx="320" cy="200" r="4" fill="#d4a843" opacity="0.6"/>
+      <!-- filigree lines left -->
+      <path d="M20 200 Q5 180 8 160 Q12 140 20 135" stroke="#d4a843" stroke-width="1" opacity="0.4" fill="none"/>
+      <path d="M20 200 Q2 195 5 175 Q8 155 15 150" stroke="#d4a843" stroke-width="0.8" opacity="0.3" fill="none"/>
+      <!-- filigree lines right -->
+      <path d="M320 200 Q335 180 332 160 Q328 140 320 135" stroke="#d4a843" stroke-width="1" opacity="0.4" fill="none"/>
+      <path d="M320 200 Q338 195 335 175 Q332 155 325 150" stroke="#d4a843" stroke-width="0.8" opacity="0.3" fill="none"/>
+      <!-- floor line -->
+      <line x1="0" y1="418" x2="340" y2="418" stroke="#d4a843" stroke-width="1" opacity="0.3"/>
+    </svg>
+
+    <div class="arch-content">
+      <!-- Moon -->
+      <div class="moon-container">
+        <canvas id="moonCanvas"></canvas>
+      </div>
+
+      <!-- Title -->
+      <div class="main-title">
+        🌙 Ramzan Mubarak
+        <span class="name-glow">RAANI</span>
+      </div>
+
+      <div class="subtitle">May this Ramadan illuminate your soul</div>
+
+      <!-- Countdown -->
+      <div class="countdown-box" id="countdown">
+        <div class="cd-unit"><span class="cd-num" id="cdH">00</span><span class="cd-label">Hours</span></div>
+        <div class="cd-unit"><span class="cd-num" id="cdM">00</span><span class="cd-label">Mins</span></div>
+        <div class="cd-unit"><span class="cd-num" id="cdS">00</span><span class="cd-label">Secs</span></div>
+      </div>
+
+      <div class="gate-group">
+        <button class="enter-btn" onclick="enterBlessings()">✨ Enter the Blessings ✨</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======================== PAGE 2 ======================== -->
+<div class="page" id="page2">
+  <div class="sparkle-container" id="sparkleContainer"></div>
+
+  <!-- Garden SVG at bottom -->
+  <svg class="garden-scene" viewBox="0 0 800 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Ground -->
+    <rect x="0" y="240" width="800" height="60" fill="rgba(212,168,67,0.06)" rx="0"/>
+    <!-- Trees/Bushes -->
+    <ellipse cx="80" cy="230" rx="50" ry="40" fill="rgba(212,168,67,0.06)" stroke="rgba(212,168,67,0.2)" stroke-width="1"/>
+    <ellipse cx="720" cy="230" rx="50" ry="40" fill="rgba(212,168,67,0.06)" stroke="rgba(212,168,67,0.2)" stroke-width="1"/>
+    <ellipse cx="160" cy="240" rx="35" ry="28" fill="rgba(212,168,67,0.04)"/>
+    <ellipse cx="640" cy="240" rx="35" ry="28" fill="rgba(212,168,67,0.04)"/>
+    <!-- Hanging lanterns (static) -->
+    <line x1="200" y1="0" x2="200" y2="60" stroke="#d4a843" stroke-width="1" opacity="0.5"/>
+    <rect x="185" y="60" width="30" height="45" rx="8" fill="rgba(212,168,67,0.15)" stroke="#d4a843" stroke-width="1" opacity="0.8"/>
+    <ellipse cx="200" cy="107" rx="12" ry="6" fill="rgba(212,168,67,0.2)" opacity="0.7"/>
+    <line x1="600" y1="0" x2="600" y2="80" stroke="#d4a843" stroke-width="1" opacity="0.5"/>
+    <rect x="585" y="80" width="30" height="45" rx="8" fill="rgba(212,168,67,0.15)" stroke="#d4a843" stroke-width="1" opacity="0.8"/>
+    <ellipse cx="600" cy="127" rx="12" ry="6" fill="rgba(212,168,67,0.2)" opacity="0.7"/>
+  </svg>
+
+  <div class="p2-content">
+    <div class="p2-greeting">✨ A Special Message ✨</div>
+
+    <div class="p2-title">Dear RAANI</div>
+
+    <div class="message-card">
+      <div class="message-arabic">
+        رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الآخِرَةِ حَسَنَةً
+      </div>
+      <div class="message-text">
+        Ye Ramadan tumhari life mein <em>peace, happiness</em> aur bohot si <em>blessings</em> lekar aaye. ✨<br><br>
+        Tumhari <em>har dua</em> kabul ho, tumhara har khwaab poora ho, aur Allah ki rehmat tumhare ghar ko <em>roshan</em> kare.<br><br>
+        Is mubarak mahine mein tumhare liye <em>khushiyan</em> hi khushiyan hown — duniya mein bhi, aakhirat mein bhi. 🌙
+      </div>
+    </div>
+
+    <button class="nav-btn" onclick="goToPage(3)">🌟 Receive Your Special Dua →</button>
+  </div>
+</div>
+
+<!-- ======================== PAGE 3 ======================== -->
+<div class="page" id="page3">
+  <!-- Mosque silhouette -->
+  <svg class="mosque-container" viewBox="0 0 500 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Main dome -->
+    <ellipse cx="250" cy="90" rx="65" ry="55" fill="rgba(212,168,67,0.06)" stroke="rgba(212,168,67,0.2)" stroke-width="1.5"/>
+    <!-- Main body -->
+    <rect x="185" y="90" width="130" height="110" fill="rgba(3,10,26,0.8)" stroke="rgba(212,168,67,0.2)" stroke-width="1"/>
+    <!-- Door arch -->
+    <path d="M235 200 L235 155 Q250 140 265 155 L265 200" fill="rgba(212,168,67,0.1)" stroke="rgba(212,168,67,0.3)" stroke-width="1"/>
+    <!-- Minarets -->
+    <rect x="140" y="100" width="28" height="100" fill="rgba(3,10,26,0.9)" stroke="rgba(212,168,67,0.2)" stroke-width="1"/>
+    <ellipse cx="154" cy="98" rx="16" ry="18" fill="rgba(212,168,67,0.08)" stroke="rgba(212,168,67,0.25)" stroke-width="1"/>
+    <line x1="154" y1="80" x2="154" y2="65" stroke="#d4a843" stroke-width="1.5" opacity="0.7"/>
+    <rect x="332" y="100" width="28" height="100" fill="rgba(3,10,26,0.9)" stroke="rgba(212,168,67,0.2)" stroke-width="1"/>
+    <ellipse cx="346" cy="98" rx="16" ry="18" fill="rgba(212,168,67,0.08)" stroke="rgba(212,168,67,0.25)" stroke-width="1"/>
+    <line x1="346" y1="80" x2="346" y2="65" stroke="#d4a843" stroke-width="1.5" opacity="0.7"/>
+    <!-- Small domes -->
+    <ellipse cx="185" cy="110" rx="30" ry="22" fill="rgba(212,168,67,0.05)" stroke="rgba(212,168,67,0.15)" stroke-width="1"/>
+    <ellipse cx="315" cy="110" rx="30" ry="22" fill="rgba(212,168,67,0.05)" stroke="rgba(212,168,67,0.15)" stroke-width="1"/>
+    <!-- Windows -->
+    <path d="M215 120 L215 140 Q225 135 235 140 L235 120 Q225 112 215 120" fill="rgba(212,168,67,0.1)"/>
+    <path d="M265 120 L265 140 Q275 135 285 140 L285 120 Q275 112 265 120" fill="rgba(212,168,67,0.1)"/>
+    <!-- Glow under mosque -->
+    <ellipse cx="250" cy="198" rx="150" ry="8" fill="rgba(212,168,67,0.06)"/>
+  </svg>
+
+  <div class="p3-content">
+    <div class="dua-title">🕌 Special Dua for RAANI 🕌</div>
+    <div class="dua-heading">Allah ki Rehmat</div>
+
+    <div class="dua-card">
+      <div class="dua-arabic">
+        اللَّهُمَّ بَارِكْ لَهَا وَاجْعَلْهَا مِنَ السُّعَدَاءِ
+      </div>
+      <div class="dua-text">
+        <strong>Allah</strong> tumhe khushiyan de, <strong>success</strong> de, aur hamesha <strong>muskurane</strong> ki wajah de. 🌟<br><br>
+        Tumhari har mushkil aasaan ho jaye, har raat sukoon ki neend aaye, aur <strong>Ramadan</strong> ki har raat tumhari duaon se roshan rahe. 🌙
+      </div>
+    </div>
+
+    <button class="dua-btn" id="duaBtn" onclick="makeDua()">🤲 Make a Dua</button>
+
+    <div class="dua-response" id="duaResponse">
+      ✨ Tumhari dua sitaron tak pahunch gayi ✨<br>
+      <span style="font-size:0.85em;color:var(--silver)">Ameen, Ya Rabbil Alameen 🌙</span>
+    </div>
+
+    <div style="margin-top:14px;display:flex;flex-direction:column;align-items:center;gap:8px;">
+      <a class="whatsapp-btn" href="https://api.whatsapp.com/send?text=🌙 Ramzan Mubarak RAANI! Allah tumhe khushiyan, success aur hamesha muskurane ki wajah de. Ameen! ✨" target="_blank">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        Share on WhatsApp
+      </a>
+      <button class="back-btn" onclick="goToPage(1)">← Back to Beginning</button>
+    </div>
+  </div>
+</div>
+
+<!-- Floating Lanterns (injected by JS) -->
+<div id="lanternContainer"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// =========================================================
+//  GLOBAL STATE
+// =========================================================
+let currentPage = 1;
+let audioEnabled = false;
+let duaFired = false;
+const audioBtn = document.getElementById('audioBtn');
+
+// =========================================================
+//  AUDIO ENGINE (Web Audio API - generated tones)
+// =========================================================
+let audioCtx = null;
+let masterGain = null;
+let audioNodes = [];
+
+function initAudio() {
+  if (audioCtx) return;
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  masterGain = audioCtx.createGain();
+  masterGain.gain.value = 0;
+  masterGain.connect(audioCtx.destination);
+
+  // Create ambient tones (Islamic-inspired harmonics)
+  const freqs = [110, 138.6, 165, 220, 277.2];
+  freqs.forEach((freq, i) => {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    const filter = audioCtx.createBiquadFilter();
+
+    osc.type = i === 0 ? 'sine' : 'triangle';
+    osc.frequency.value = freq;
+
+    filter.type = 'lowpass';
+    filter.frequency.value = 800;
+    filter.Q.value = 0.5;
+
+    gain.gain.value = i === 0 ? 0.08 : 0.03 / (i + 1);
+
+    // Gentle tremolo
+    const tremLFO = audioCtx.createOscillator();
+    const tremGain = audioCtx.createGain();
+    tremLFO.frequency.value = 0.3 + i * 0.07;
+    tremGain.gain.value = 0.015;
+    tremLFO.connect(tremGain);
+    tremGain.connect(gain.gain);
+    tremLFO.start();
+
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(masterGain);
+    osc.start();
+    audioNodes.push(osc, tremLFO);
+  });
+
+  // Reverb with delay
+  const delay = audioCtx.createDelay(2);
+  delay.delayTime.value = 0.8;
+  const delayFeedback = audioCtx.createGain();
+  delayFeedback.gain.value = 0.3;
+  const delayFilter = audioCtx.createBiquadFilter();
+  delayFilter.type = 'lowpass';
+  delayFilter.frequency.value = 400;
+  masterGain.connect(delay);
+  delay.connect(delayFeedback);
+  delayFeedback.connect(delayFilter);
+  delayFilter.connect(delay);
+}
+
+function toggleAudio() {
+  if (!audioCtx) initAudio();
+  audioEnabled = !audioEnabled;
+  if (audioEnabled) {
+    audioCtx.resume();
+    masterGain.gain.linearRampToValueAtTime(0.4, audioCtx.currentTime + 2);
+    audioBtn.textContent = '🔊';
+    audioBtn.title = 'Mute Sound';
+  } else {
+    masterGain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 1);
+    audioBtn.textContent = '🔇';
+    audioBtn.title = 'Enable Sound';
+  }
+}
+
+audioBtn.addEventListener('click', toggleAudio);
+
+// bell-like tone for transitions
+function playBell() {
+  if (!audioCtx || !audioEnabled) return;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = 'sine';
+  osc.frequency.value = 528;
+  gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 2);
+  osc.connect(gain); gain.connect(masterGain);
+  osc.start(); osc.stop(audioCtx.currentTime + 2);
+}
+
+function playDuaSound() {
+  if (!audioCtx) initAudio();
+  if (!audioEnabled) { audioEnabled = true; audioBtn.textContent = '🔊'; audioCtx.resume(); }
+  const freqs2 = [528, 639, 741];
+  freqs2.forEach((f, i) => {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = f;
+    gain.gain.setValueAtTime(0, audioCtx.currentTime + i*0.3);
+    gain.gain.linearRampToValueAtTime(0.25, audioCtx.currentTime + i*0.3 + 0.3);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + i*0.3 + 3);
+    osc.connect(gain); gain.connect(masterGain);
+    osc.start(audioCtx.currentTime + i*0.3);
+    osc.stop(audioCtx.currentTime + i*0.3 + 3);
+  });
+}
+
+// =========================================================
+//  STARFIELD BACKGROUND CANVAS
+// =========================================================
+const bgCanvas = document.getElementById('bgCanvas');
+const bgCtx = bgCanvas.getContext('2d');
+let stars = [];
+let W, H;
+
+function resizeCanvases() {
+  W = window.innerWidth; H = window.innerHeight;
+  [bgCanvas, particleCanvas, cloudCanvas, mainMoonCanvas].forEach(c => {
+    c.width = W; c.height = H;
+  });
+}
+
+function createStars() {
+  stars = [];
+  const count = Math.min(200, Math.floor((W * H) / 4000));
+  for (let i = 0; i < count; i++) {
+    stars.push({
+      x: Math.random() * W,
+      y: Math.random() * H * 0.75,
+      r: Math.random() * 1.5 + 0.3,
+      alpha: Math.random(),
+      speed: Math.random() * 0.008 + 0.002,
+      phase: Math.random() * Math.PI * 2
+    });
+  }
+}
+
+function drawBg(t) {
+  // Sky gradient
+  const grad = bgCtx.createLinearGradient(0, 0, 0, H);
+  grad.addColorStop(0, '#010610');
+  grad.addColorStop(0.4, '#030a1a');
+  grad.addColorStop(0.7, '#060d22');
+  grad.addColorStop(1, '#0a1230');
+  bgCtx.fillStyle = grad;
+  bgCtx.fillRect(0, 0, W, H);
+
+  // Stars
+  stars.forEach(s => {
+    const a = 0.3 + 0.7 * (0.5 + 0.5 * Math.sin(t * s.speed + s.phase));
+    bgCtx.beginPath();
+    bgCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    bgCtx.fillStyle = `rgba(255,253,230,${a})`;
+    bgCtx.fill();
+    // occasional twinkle cross
+    if (s.r > 1.2 && a > 0.8) {
+      bgCtx.strokeStyle = `rgba(255,253,230,${a*0.4})`;
+      bgCtx.lineWidth = 0.5;
+      bgCtx.beginPath();
+      bgCtx.moveTo(s.x - s.r*3, s.y);
+      bgCtx.lineTo(s.x + s.r*3, s.y);
+      bgCtx.moveTo(s.x, s.y - s.r*3);
+      bgCtx.lineTo(s.x, s.y + s.r*3);
+      bgCtx.stroke();
+    }
+  });
+}
+
+// =========================================================
+//  FLOATING GOLD PARTICLES
+// =========================================================
+const pCanvas = document.getElementById('particleCanvas');
+const pCtx = pCanvas.getContext('2d');
+let particles = [];
+
+function createParticles() {
+  particles = [];
+  const count = Math.min(60, Math.floor(W/12));
+  for (let i = 0; i < count; i++) {
+    particles.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: -(Math.random() * 0.4 + 0.1),
+      r: Math.random() * 2 + 0.5,
+      alpha: Math.random() * 0.4 + 0.1,
+      life: Math.random()
+    });
+  }
+}
+
+function updateParticles() {
+  pCtx.clearRect(0, 0, W, H);
+  particles.forEach(p => {
+    p.x += p.vx; p.y += p.vy; p.life += 0.004;
+    if (p.y < -10 || p.life > 1) {
+      p.x = Math.random() * W;
+      p.y = H + 10;
+      p.life = 0;
+    }
+    const a = p.alpha * Math.sin(p.life * Math.PI);
+    pCtx.beginPath();
+    pCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    pCtx.fillStyle = `rgba(212,168,67,${a})`;
+    pCtx.fill();
+  });
+}
+
+// =========================================================
+//  CLOUD SYSTEM
+// =========================================================
+const cCanvas = document.getElementById('cloudCanvas');
+const cCtx = cCanvas.getContext('2d');
+let clouds = [];
+let moonRevealProgress = 0;
+let moonRevealStarted = false;
+
+function createClouds() {
+  clouds = [];
+  for (let i = 0; i < 5; i++) {
+    clouds.push({
+      x: Math.random() * W * 1.5 - W * 0.25,
+      y: H * 0.08 + Math.random() * H * 0.2,
+      w: Math.random() * 200 + 120,
+      h: Math.random() * 60 + 40,
+      speed: Math.random() * 0.15 + 0.05,
+      alpha: Math.random() * 0.25 + 0.1
+    });
+  }
+}
+
+function drawCloud(x, y, w, h, alpha) {
+  cCtx.save();
+  cCtx.globalAlpha = alpha;
+  const grad = cCtx.createRadialGradient(x, y, 0, x, y, w * 0.6);
+  grad.addColorStop(0, 'rgba(180,190,220,0.9)');
+  grad.addColorStop(0.5, 'rgba(150,165,200,0.6)');
+  grad.addColorStop(1, 'rgba(100,120,170,0)');
+  cCtx.fillStyle = grad;
+  cCtx.beginPath();
+  cCtx.ellipse(x, y, w * 0.5, h * 0.4, 0, 0, Math.PI * 2);
+  cCtx.fill();
+  // puffs
+  [-0.3, 0, 0.3].forEach((ox, i) => {
+    cCtx.beginPath();
+    const r2 = cCtx.createRadialGradient(x+w*ox, y-h*0.1, 0, x+w*ox, y-h*0.1, h*0.4);
+    r2.addColorStop(0, 'rgba(200,210,230,0.8)');
+    r2.addColorStop(1, 'rgba(160,180,210,0)');
+    cCtx.fillStyle = r2;
+    cCtx.ellipse(x + w * ox, y - h * 0.1, h * (0.38 - Math.abs(ox)*0.1), h * 0.35, 0, 0, Math.PI * 2);
+    cCtx.fill();
+  });
+  cCtx.restore();
+}
+
+function updateClouds(t) {
+  cCtx.clearRect(0, 0, W, H);
+  clouds.forEach(c => {
+    c.x += c.speed;
+    if (c.x > W + c.w) c.x = -c.w;
+    // clouds fade out as moon reveals
+    const fadeOut = Math.max(0, 1 - moonRevealProgress * 1.5);
+    drawCloud(c.x, c.y, c.w, c.h, c.alpha * fadeOut);
+  });
+}
+
+// =========================================================
+//  MAIN MOON (Canvas-based crescent) — floating in sky
+// =========================================================
+const mmCanvas = document.getElementById('mainMoonCanvas');
+const mmCtx = mmCanvas.getContext('2d');
+let moonX, moonY, moonR;
+let moonGlowPulse = 0;
+
+function positionMoonCanvas() {
+  moonR = Math.min(W, H) * 0.09;
+  moonX = W * 0.75;
+  moonY = H * 0.18;
+  mmCanvas.style.left = (moonX - moonR * 3) + 'px';
+  mmCanvas.style.top = (moonY - moonR * 3) + 'px';
+  mmCanvas.width = moonR * 6;
+  mmCanvas.height = moonR * 6;
+}
+
+function drawMainMoon(t) {
+  const cx = moonR * 3, cy = moonR * 3;
+  mmCtx.clearRect(0, 0, mmCanvas.width, mmCanvas.height);
+
+  const revAlpha = Math.min(1, moonRevealProgress * 2);
+  if (revAlpha <= 0) return;
+
+  mmCtx.save();
+  mmCtx.globalAlpha = revAlpha;
+  moonGlowPulse = 0.7 + 0.3 * Math.sin(t * 0.8);
+
+  // Atmospheric glow layers
+  [moonR*3, moonR*2.2, moonR*1.6].forEach((r, i) => {
+    const g = mmCtx.createRadialGradient(cx, cy, 0, cx, cy, r);
+    g.addColorStop(0, `rgba(200,220,255,${0.06 * moonGlowPulse})`);
+    g.addColorStop(1, 'rgba(200,220,255,0)');
+    mmCtx.fillStyle = g;
+    mmCtx.beginPath();
+    mmCtx.arc(cx, cy, r, 0, Math.PI * 2);
+    mmCtx.fill();
+  });
+
+  // Moon body
+  const moonGrad = mmCtx.createRadialGradient(cx - moonR*0.2, cy - moonR*0.2, 0, cx, cy, moonR);
+  moonGrad.addColorStop(0, '#fffde7');
+  moonGrad.addColorStop(0.4, '#faecc2');
+  moonGrad.addColorStop(0.8, '#e8d090');
+  moonGrad.addColorStop(1, '#c8a84b');
+  mmCtx.fillStyle = moonGrad;
+  mmCtx.beginPath();
+  mmCtx.arc(cx, cy, moonR, 0, Math.PI * 2);
+  mmCtx.fill();
+
+  // Crescent cutout
+  mmCtx.globalCompositeOperation = 'destination-out';
+  mmCtx.beginPath();
+  mmCtx.arc(cx + moonR * 0.42, cy - moonR * 0.08, moonR * 0.88, 0, Math.PI * 2);
+  mmCtx.fill();
+  mmCtx.globalCompositeOperation = 'source-over';
+
+  // Surface texture
+  mmCtx.globalAlpha = revAlpha * 0.15;
+  for (let i = 0; i < 6; i++) {
+    const mx = cx - moonR*0.5 + Math.cos(i * 1.1) * moonR * 0.25;
+    const my = cy + Math.sin(i * 1.4) * moonR * 0.3;
+    mmCtx.beginPath();
+    mmCtx.arc(mx, my, moonR * 0.08, 0, Math.PI * 2);
+    mmCtx.fillStyle = 'rgba(160,130,60,1)';
+    mmCtx.fill();
+  }
+  mmCtx.restore();
+}
+
+// =========================================================
+//  MINI MOON CANVAS (Page 1 arch & Page 2)
+// =========================================================
+function drawMiniMoon(canvas, t, spin) {
+  const ctx = canvas.getContext('2d');
+  const s = canvas.width;
+  ctx.clearRect(0, 0, s, s);
+  const cx = s/2, cy = s/2, r = s * 0.38;
+
+  ctx.save();
+  if (spin) { ctx.translate(cx,cy); ctx.rotate(t*0.3); ctx.translate(-cx,-cy); }
+
+  // glow
+  const g = ctx.createRadialGradient(cx, cy, r*0.3, cx, cy, r*2);
+  g.addColorStop(0, 'rgba(212,168,67,0.25)');
+  g.addColorStop(1, 'rgba(212,168,67,0)');
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(cx, cy, r*2, 0, Math.PI*2); ctx.fill();
+
+  // moon
+  const mg = ctx.createRadialGradient(cx-r*0.2, cy-r*0.2, 0, cx, cy, r);
+  mg.addColorStop(0, '#fffde7'); mg.addColorStop(0.5, '#f0d88a'); mg.addColorStop(1, '#c8a84b');
+  ctx.fillStyle = mg; ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.fill();
+
+  // crescent
+  ctx.globalCompositeOperation = 'destination-out';
+  ctx.beginPath(); ctx.arc(cx + r*0.45, cy - r*0.05, r*0.85, 0, Math.PI*2); ctx.fill();
+  ctx.globalCompositeOperation = 'source-over';
+
+  // stars around
+  [[-0.75,-0.75],[0.8,-0.6],[0.65,0.7],[-0.7,0.5],[0,-1]].forEach(([sx,sy]) => {
+    ctx.beginPath();
+    ctx.arc(cx + sx*r*1.6, cy + sy*r*1.6, 1.5, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(255,253,220,${0.5+0.5*Math.sin(t+sx*3)})`;
+    ctx.fill();
+  });
+  ctx.restore();
+}
+
+function setupMiniCanvas(id, size) {
+  const c = document.getElementById(id);
+  c.width = size; c.height = size;
+  return c;
+}
+
+// =========================================================
+//  FLOATING LANTERNS (DOM)
+// =========================================================
+const lanternSVG = (color, scale=1) => `
+<svg width="${60*scale}" height="${80*scale}" viewBox="0 0 60 80" xmlns="http://www.w3.org/2000/svg">
+  <line x1="30" y1="0" x2="30" y2="10" stroke="${color}" stroke-width="1.5"/>
+  <path d="M15 10 Q10 40 15 65 L45 65 Q50 40 45 10 Z" fill="${color}22" stroke="${color}" stroke-width="1.5"/>
+  <ellipse cx="30" cy="10" rx="16" ry="5" fill="${color}33" stroke="${color}" stroke-width="1"/>
+  <ellipse cx="30" cy="65" rx="16" ry="5" fill="${color}33" stroke="${color}" stroke-width="1"/>
+  <path d="M18 37 Q30 30 42 37" stroke="${color}" stroke-width="1" fill="none" opacity="0.5"/>
+  <circle cx="30" cy="37" r="8" fill="${color}44"/>
+  <line x1="30" y1="65" x2="25" y2="75" stroke="${color}" stroke-width="1"/>
+  <line x1="30" y1="65" x2="35" y2="75" stroke="${color}" stroke-width="1"/>
+</svg>`;
+
+function createLanterns() {
+  const container = document.getElementById('lanternContainer');
+  container.innerHTML = '';
+  const positions = [
+    {x:5, y:20, delay:0, dur:6, scale:0.7},
+    {x:88, y:15, delay:1, dur:7, scale:0.8},
+    {x:15, y:55, delay:2, dur:8, scale:0.6},
+    {x:82, y:50, delay:0.5, dur:7.5, scale:0.65},
+    {x:50, y:10, delay:3, dur:6.5, scale:0.75},
+    {x:65, y:65, delay:1.5, dur:8.5, scale:0.55},
+    {x:30, y:70, delay:2.5, dur:7, scale:0.6},
+  ];
+  const colors = ['#d4a843','#c89830','#f0c96a','#b88a30'];
+
+  positions.forEach((p, i) => {
+    const div = document.createElement('div');
+    div.className = 'lantern';
+    div.style.cssText = `
+      left:${p.x}%;top:${p.y}%;
+      animation-delay:${4+p.delay}s;
+      animation-duration:${p.dur}s,2s;
+      animation-name:lanternFloat,lanternFade;
+    `;
+    div.innerHTML = lanternSVG(colors[i%colors.length], p.scale);
+    container.appendChild(div);
+  });
+}
+
+// =========================================================
+//  PAGE 2 SPARKLES
+// =========================================================
+function createSparkles() {
+  const container = document.getElementById('sparkleContainer');
+  container.innerHTML = '';
+  for (let i = 0; i < 18; i++) {
+    const s = document.createElement('div');
+    s.className = 'sparkle';
+    s.style.cssText = `
+      left:${Math.random()*100}%;
+      bottom:${Math.random()*100}%;
+      width:${Math.random()*5+2}px;
+      height:${Math.random()*5+2}px;
+      animation-delay:${Math.random()*4}s;
+      animation-duration:${Math.random()*3+2}s;
+    `;
+    container.appendChild(s);
+  }
+}
+
+// =========================================================
+//  COUNTDOWN TIMER
+// =========================================================
+function updateCountdown() {
+  const now = new Date();
+  const midnight = new Date();
+  midnight.setHours(24, 0, 0, 0);
+  const diff = midnight - now;
+  const h = Math.floor(diff / 3600000);
+  const m = Math.floor((diff % 3600000) / 60000);
+  const s = Math.floor((diff % 60000) / 1000);
+  document.getElementById('cdH').textContent = String(h).padStart(2,'0');
+  document.getElementById('cdM').textContent = String(m).padStart(2,'0');
+  document.getElementById('cdS').textContent = String(s).padStart(2,'0');
+}
+
+// =========================================================
+//  PAGE NAVIGATION
+// =========================================================
+function goToPage(n) {
+  if (n === currentPage) return;
+  playBell();
+
+  const overlay = document.getElementById('transitionOverlay');
+  overlay.style.transition = 'opacity 0.5s ease';
+  overlay.classList.add('flash');
+
+  setTimeout(() => {
+    document.querySelectorAll('.page').forEach(p => { p.classList.remove('active'); p.style.opacity = '0'; });
+    const target = document.getElementById('page' + n);
+    if (target) {
+      target.classList.add('active');
+      setTimeout(() => { target.style.opacity = '1'; }, 50);
+    }
+    // update dots
+    document.querySelectorAll('.dot').forEach((d, i) => {
+      d.classList.toggle('active', i === n-1);
+    });
+    currentPage = n;
+    overlay.style.transition = 'opacity 0.8s ease';
+    overlay.classList.remove('flash');
+
+    if (n === 2) createSparkles();
+  }, 500);
+}
+
+function enterBlessings() {
+  // Gate opening animation
+  const arch = document.querySelector('.arch-wrapper');
+  arch.style.transition = 'all 1.5s cubic-bezier(0.4,0,0.2,1)';
+  arch.style.transform = 'scale(1.1) rotateX(10deg)';
+  arch.style.opacity = '0';
+
+  setTimeout(() => goToPage(2), 600);
+}
+
+// =========================================================
+//  DUA PARTICLES
+// =========================================================
+function makeDua() {
+  if (duaFired) return;
+  duaFired = true;
+  playDuaSound();
+
+  const btn = document.getElementById('duaBtn');
+  btn.style.opacity = '0.5';
+  btn.style.pointerEvents = 'none';
+
+  // Fire particles
+  for (let i = 0; i < 60; i++) {
+    setTimeout(() => {
+      const p = document.createElement('div');
+      p.className = 'dua-particle';
+      const colors = ['#d4a843','#f0c96a','#fffde7','#c8d8e8'];
+      const size = Math.random() * 8 + 3;
+      p.style.cssText = `
+        left:${20 + Math.random()*60}%;
+        bottom:${10 + Math.random()*30}%;
+        width:${size}px; height:${size}px;
+        background:${colors[Math.floor(Math.random()*colors.length)]};
+        box-shadow:0 0 ${size*2}px ${colors[0]};
+        animation-duration:${Math.random()*2+1.5}s;
+        animation-delay:${Math.random()*0.5}s;
+      `;
+      document.body.appendChild(p);
+      setTimeout(() => p.remove(), 4000);
+    }, i * 50);
+  }
+
+  // Brighten stars effect
+  stars.forEach(s => { s.r *= 1.5; });
+  setTimeout(() => { stars.forEach(s => { s.r /= 1.5; }); }, 3000);
+
+  setTimeout(() => {
+    const resp = document.getElementById('duaResponse');
+    resp.style.display = 'block';
+    requestAnimationFrame(() => { resp.classList.add('visible'); });
+  }, 1500);
+}
+
+// =========================================================
+//  MAIN ANIMATION LOOP
+// =========================================================
+let startTime = null;
+const miniMoon1 = setupMiniCanvas('moonCanvas', 80);
+
+function animate(ts) {
+  if (!startTime) startTime = ts;
+  const t = (ts - startTime) / 1000;
+
+  // Moon reveal: start after 3 seconds
+  if (t > 3 && !moonRevealStarted) moonRevealStarted = true;
+  if (moonRevealStarted) {
+    moonRevealProgress = Math.min(1, moonRevealProgress + 0.003);
+  }
+
+  drawBg(t);
+  updateParticles();
+  updateClouds(t);
+  drawMainMoon(t);
+  drawMiniMoon(miniMoon1, t, false);
+
+  requestAnimationFrame(animate);
+}
+
+// =========================================================
+//  INIT
+// =========================================================
+window.addEventListener('resize', () => {
+  resizeCanvases();
+  createStars();
+  createParticles();
+  createClouds();
+  positionMoonCanvas();
+});
+
+resizeCanvases();
+createStars();
+createParticles();
+createClouds();
+positionMoonCanvas();
+createLanterns();
+setInterval(updateCountdown, 1000);
+updateCountdown();
+
+// Make page 1 visible
+const p1 = document.getElementById('page1');
+p1.style.opacity = '0';
+p1.classList.add('active');
+setTimeout(() => { p1.style.transition = 'opacity 2s ease'; p1.style.opacity = '1'; }, 100);
+
+requestAnimationFrame(animate);
+
+// Touch/swipe support
+let touchStartX = 0, touchStartY = 0;
+document.addEventListener('touchstart', e => {
+  touchStartX = e.touches[0].clientX;
+  touchStartY = e.touches[0].clientY;
+}, {passive:true});
+document.addEventListener('touchend', e => {
+  const dx = e.changedTouches[0].clientX - touchStartX;
+  const dy = e.changedTouches[0].clientY - touchStartY;
+  if (Math.abs(dx) < 30 && Math.abs(dy) > 50) {
+    if (dy < 0 && currentPage < 3) goToPage(currentPage + 1);
+    else if (dy > 0 && currentPage > 1) goToPage(currentPage - 1);
+  }
+}, {passive:true});
+</script>
+</body>
+</html>
